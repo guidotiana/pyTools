@@ -143,25 +143,28 @@ class Dali:
         if dropNoOrganism: self.analogs.drop(  self.analogs[ self.analogs['organism_id'] =='' ].index, inplace=True  )
 
 
-   def GetSequenceFromPdb(self, tmpPath='.', localPdb='', verbose=False, paranoid=True):
+   def GetSequenceFromPdb(self, tmpPath='.', localPdb='', verbose=False):
  
       for i,prot in self.analogs.iterrows():
 
         pdb2name = prot['pdb']
-        myChain = prot['chain'] 
+        myChain = prot['chain']
 
-        if verbose: print(" reading file "+tmpPath+'/'+pdb2name+'.pdb  ('+str(i)+')')
+        if verbose: print(" reading file "+tmpPath+'/'+pdb2name+'.pdb')
 
         pdb=Pdb()
         if not path.isfile(tmpPath+'/'+pdb2name+'.pdb'):
          if localPdb=='':
            if verbose: print(" downloading file")
            pdb.Download(pdbCode=pdb2name, verbose=True, path=tmpPath)
+           pdb.ReadFile(tmpPath+'/'+pdb2name+'.pdb', skipNonAminoacid=True)
          else:
            if verbose: print(" copying file from local directory "+localPdb)
-           pdb.TakeLocalFiles(pdbCode=pdb2name, sourceDir=localPdb, targetDir=tmpPath )           
-        else:
+           pdb.TakeLocalFiles(pdbCode=pdb2name, sourceDir=localPdb, targetDir=tmpPath )
            pdb.ReadFile(tmpPath+'/'+pdb2name+'.pdb', skipNonAminoacid=True)
+        else:
+            pdb.ReadFile(tmpPath+'/'+pdb2name+'.pdb', skipNonAminoacid=True)
+    
         seq = pdb.GetSequence(chain=myChain)
 
         self.analogs.at[i, 'sequence'] = seq
@@ -169,11 +172,7 @@ class Dali:
         self.analogs.at[i, 'organism_id'] = pdb.GetKey('ORGANISM_TAXID')
         self.analogs.at[i, 'organism_scientific'] = pdb.GetKey('ORGANISM_SCIENTIFIC')
                                  
-        if len(seq)==0: 
-          if paranoid: sys.exit("ERROR: Empty sequence for pdb "+pdb2name+myChain)
-          else: 
-             self.analogs.drop(  self.analogs[ (self.analogs['pdb']==pdb2name) & (self.analogs['chain']==myChain)  ].index, inplace=True )
-             print("WARNING: empty pdb "+pdb2name+myChain+" dropped from alignment")
+        if len(seq)==0: sys.exit("ERROR: Empty sequence for pdb "+pdb2name+myChain)
 
         if verbose:
           print(' has read pdb '+pdb2name+myChain+' (length='+str(len(seq))+')')
