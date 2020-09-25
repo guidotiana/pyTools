@@ -443,9 +443,7 @@ class Pdb:
         request.urlretrieve(url, path+'/'+pdbCode+'.pdb')
       except:
         sys.exit('Canot download pdb '+pdbCode)
-      
-      self.ReadFile(filename=path+'/'+pdbCode+'.pdb')
-
+ 
 
    #####################################
    def GetKey(self, key, verbose=False):
