@@ -466,22 +466,24 @@ class Pdb:
    #####################################
    def TakeLocalFiles(self, pdbCode, sourceDir, targetDir):
 
-      sys.exit('IT DOES NOT WORK')
+      #sys.exit('IT DOES NOT WORK')
       
       subDir = pdbCode[1:3]
       sourceFile = sourceDir+'/'+subDir+'/'+'pdb'+pdbCode+'.ent.gz'
       targetFile = targetDir+'/'+pdbCode+'.pdb'
                                     
-    #  try:
-      cmd = 'cp '+sourceFile+' '+targetDir+'/'
-      system(cmd)
-      cmd = 'gunzip '+targetDir+'/'+'pdb'+pdbCode+'.ent.gz' 
-      system(cmd)
-      cmd = 'mv '+ targetDir+'/'+'pdb'+pdbCode+'.ent.gz' +' '+targetFile
-      system(cmd)
-     # except:
-  #      sys.exit('Cannot get'+targetFile+' from local directory')
- 
+      if not path.isfile(sourceFile):
+         print(sourceFile+' not found, downloading file '+pdbCode+'.pdb')
+         self.Download(pdbCode=pdbCode, verbose=True, path=targetDir)
+      else:
+         cmd = 'cp '+sourceFile+' '+targetDir+'/'
+         system(cmd)
+         cmd = 'gunzip '+targetDir+'/'+'pdb'+pdbCode+'.ent.gz'
+         system(cmd)
+         cmd = 'mv '+ targetDir+'/'+'pdb'+pdbCode+'.ent' +' '+targetFile
+         system(cmd)
+   
+  #####################################
    def PrintSummary(self):
 
       print('Summary of pdb '+self.pdbName)
