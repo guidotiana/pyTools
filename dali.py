@@ -32,8 +32,8 @@ class Dali:
            pdb.Download(pdbCode=refPdb, verbose=verbose, path=tmpPath)
          else:
            pdb.TakeLocalFiles(pdbCode=refPdb, sourceDir=localPdb, targetDir=tmpPath )
-      else:
-         pdb.ReadFile(tmpPath+'/'+refPdb+'.pdb', skipNonAminoacid=True)
+      
+      pdb.ReadFile(tmpPath+'/'+refPdb+'.pdb', skipNonAminoacid=True)
       self.refSequence = pdb.GetSequence(chain=refChain)
       del pdb
       self.refLength = len(self.refSequence)
