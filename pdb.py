@@ -8,7 +8,7 @@ import sys
 from atomStatistics import AtomStatistics
 import textwrap
 from urllib import request
-from os import system
+from os import system,path
 
 class Pdb:
 
